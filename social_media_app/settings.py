@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(BASE_DIR)
+
 SECRET_KEY = 'django-insecure-w9rb!#o@w$m_441!6ov77@me9f+k0i)3twa_ce#5ba6!mt+2il'
 
 DEBUG = True
@@ -103,6 +103,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-LOGIN_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = 'post_list'
 ACCOUNT_EMAIL_REQUIRED = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
