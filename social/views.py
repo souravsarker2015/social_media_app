@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Comments, UserProfile
 from django.views import View
@@ -106,7 +107,7 @@ class ProfileView(View):
         user = profile.user
         posts = Post.objects.filter(author=user).order_by('-created_on')
         followers = profile.followers.all()
-        print(followers.query)
+        # print(followers.query)
         if len(followers) == 0:
             is_following = False
 
@@ -154,3 +155,88 @@ class RemoveFollower(LoginRequiredMixin, View):
         profile = UserProfile.objects.get(pk=pk)
         profile.followers.remove(request.user)
         return redirect('profile', pk=profile.pk)
+
+
+class AddLikes(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        post = Post.objects.get(pk=pk)
+        is_dislike = False
+        for dislike in post.dislikes.all():
+            if dislike == request.user:
+                is_dislike = True
+                break
+        if is_dislike:
+            post.dislikes.remove(request.user)
+
+        is_like = False
+        # print(post.likes)
+        for like in post.likes.all():
+            if like == request.user:
+                is_like = True
+                break
+        if not is_like:
+            post.likes.add(request.user)
+
+        if is_like:
+            post.likes.remove(request.user)
+
+        next = request.POST.get('next', '/')
+        return HttpResponseRedirect(next)
+
+
+# class AddDislike(LoginRequiredMixin, View):
+#     def post(self, request, pk, *args, **kwargs):
+#         post = Post.objects.get(pk=pk)
+#
+#         is_like = False
+#
+#         for like in post.likes.all():
+#             if like == request.user:
+#                 is_like = True
+#                 break
+#
+#         if is_like:
+#             post.likes.remove(request.user)
+#
+#         is_dislike = False
+#
+#         for dislike in post.dislikes.all():
+#             if dislike == request.user:
+#                 is_dislike = True
+#                 break
+#
+#         if not is_dislike:
+#             post.dislikes.add(request.user)
+#
+#         if is_dislike:
+#             post.dislikes.remove(request.user)
+#
+#         next = request.POST.get('next', '/')
+#         return HttpResponseRedirect(next)
+
+class AddDislike(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        post = Post.objects.get(pk=pk)
+        is_like = False
+        # print(post.likes)
+        for like in post.likes.all():
+            if like == request.user:
+                is_like = True
+                break
+        if is_like:
+            post.likes.remove(request.user)
+
+        is_dislike = False
+        for dislike in post.dislikes.all():
+            if dislike == request.user:
+                is_dislike = True
+                break
+
+        if not is_dislike:
+            post.dislikes.add(request.user)
+
+        if is_dislike:
+            post.dislikes.remove(request.user)
+
+        next = request.POST.get('next', '/')
+        return HttpResponseRedirect(next)
