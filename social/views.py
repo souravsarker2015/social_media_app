@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
@@ -184,36 +185,6 @@ class AddLikes(LoginRequiredMixin, View):
         return HttpResponseRedirect(next)
 
 
-# class AddDislike(LoginRequiredMixin, View):
-#     def post(self, request, pk, *args, **kwargs):
-#         post = Post.objects.get(pk=pk)
-#
-#         is_like = False
-#
-#         for like in post.likes.all():
-#             if like == request.user:
-#                 is_like = True
-#                 break
-#
-#         if is_like:
-#             post.likes.remove(request.user)
-#
-#         is_dislike = False
-#
-#         for dislike in post.dislikes.all():
-#             if dislike == request.user:
-#                 is_dislike = True
-#                 break
-#
-#         if not is_dislike:
-#             post.dislikes.add(request.user)
-#
-#         if is_dislike:
-#             post.dislikes.remove(request.user)
-#
-#         next = request.POST.get('next', '/')
-#         return HttpResponseRedirect(next)
-
 class AddDislike(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         post = Post.objects.get(pk=pk)
@@ -240,3 +211,16 @@ class AddDislike(LoginRequiredMixin, View):
 
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
+
+
+class UserSearch(View):
+    def get(self, request, *args, **kwargs):
+        # user = self.request.user
+        query = self.request.GET.get('query')
+        profile_list = UserProfile.objects.filter(
+            Q(user__username__icontains=query)
+        )
+        context = {
+            'profile_list': profile_list,
+        }
+        return render(request, 'social/search.html', context)
