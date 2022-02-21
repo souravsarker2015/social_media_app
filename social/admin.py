@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Comments, UserProfile
+from .models import Post, Comments, UserProfile, Notification
 
 
 @admin.register(Post)
@@ -15,3 +15,8 @@ class CommentsAdmin(admin.ModelAdmin):
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'name', 'bio', 'birth_date', 'location', 'picture']
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['notification_type', 'to_user', 'from_user', 'post', 'comment', 'date', 'user_has_seen']

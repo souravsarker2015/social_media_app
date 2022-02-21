@@ -57,3 +57,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+class Notification(models.Model):
+    # 1:like 2: comment 3: follow
+    notification_type = models.IntegerField()
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification_to', null=True)
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notification_from', null=True)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='+', blank=True, null=True)
+    comment = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name='+', blank=True, null=True)
+    date = models.DateTimeField(default=timezone.now)
+    user_has_seen = models.BooleanField(default=False)
