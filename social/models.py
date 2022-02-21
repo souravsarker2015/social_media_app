@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 class Post(models.Model):
     body = models.TextField()
-    created_on = models.DateTimeField(default=timezone.now())
+    created_on = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField(User, blank=True, related_name='likes')
     dislikes = models.ManyToManyField(User, blank=True, related_name='dislikes')
@@ -18,8 +18,21 @@ class Post(models.Model):
 class Comments(models.Model):
     comment = models.TextField()
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    created_on = models.DateTimeField(default=timezone.now())
+    created_on = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    likes = models.ManyToManyField(User, blank=True, related_name='comment_likes')
+    dislikes = models.ManyToManyField(User, blank=True, related_name='comment_dislikes')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='+')
+
+    @property
+    def children(self):
+        return Comments.objects.filter(parent=self).order_by('-created_on').all()
+
+    @property
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False
 
     # def __str__(self):
     #     return self.post.body

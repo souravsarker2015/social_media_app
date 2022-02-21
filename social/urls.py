@@ -6,7 +6,13 @@ urlpatterns = [
     path('post/<int:pk>/', views.PostDetails.as_view(), name='post_details'),
     path('post/edit/<int:pk>/', views.PostEditView.as_view(), name='post_edit'),
     path('post/delete/<int:pk>/', views.PostDeleteView.as_view(), name='post_delete'),
+
     path('post/<int:post_pk>/comment/delete/<int:pk>/', views.CommentsDeleteView.as_view(), name='comment_delete'),
+    path('post/<int:post_pk>/comment/<int:pk>/like/', views.AddCommentLike.as_view(), name='comment-like'),
+    path('post/<int:post_pk>/comment/<int:pk>/dislike/', views.AddCommentDislike.as_view(), name='comment-dislike'),
+
+    path('post/<int:post_pk>/comment/<int:pk>/reply/', views.CommentReplyView.as_view(), name='comment-reply'),
+
     path('post/<int:pk>/like/', views.AddLikes.as_view(), name='like'),
     path('post/<int:pk>/dislike/', views.AddDislike.as_view(), name='dislike'),
 
