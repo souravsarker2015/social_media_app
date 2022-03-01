@@ -369,11 +369,11 @@ class CreateThread(View):
 
     def post(self, request, *args, **kwargs):
         form = ThreadForm(request.POST)
-        username = request.POST['username']
+        username = request.POST.get('username')
         # print(username)
         try:
             receiver = User.objects.get(username=username)
-            print(receiver)
+            # print(receiver)
             if ThreadModel.objects.filter(user=request.user, receiver=receiver).exists():
                 thread = ThreadModel.objects.filter(user=request.user, receiver=receiver)[0]
                 return redirect('thread', pk=thread.pk)
@@ -408,7 +408,7 @@ class ThreadView(View):
 class CreateMessage(View):
     def post(self, request, pk, *args, **kwargs):
         thread = ThreadModel.objects.get(pk=pk)
-        if thread.receiver == thread.user:
+        if thread.receiver == request.user:
             receiver = thread.user
         else:
             receiver = thread.receiver
