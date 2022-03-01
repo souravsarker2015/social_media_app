@@ -69,3 +69,18 @@ class Notification(models.Model):
     comment = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name='+', blank=True, null=True)
     date = models.DateTimeField(default=timezone.now)
     user_has_seen = models.BooleanField(default=False)
+
+
+class ThreadModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+
+
+class MessageModel(models.Model):
+    thread = models.ForeignKey(ThreadModel, on_delete=models.CASCADE, blank=True, null=True)
+    sender_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+    receiver_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+    body = models.CharField(max_length=2000)
+    image = models.ImageField(upload_to="uploads/message_photos", blank=True, null=True)
+    date = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)

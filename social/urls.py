@@ -26,4 +26,10 @@ urlpatterns = [
     path('notification/<int:notification_pk>/post/<int:post_pk>/', views.PostNotification.as_view(), name='post-notification'),
     path('notification/<int:notification_pk>/profile/<int:profile_pk>/', views.FollowNotification.as_view(), name='follow-notification'),
     path('notification/delete/<int:notification_pk>/', views.RemoveNotification.as_view(), name='notification-delete'),
+
+    path('inbox/', views.ListThread.as_view(), name='inbox'),
+    path('inbox/create-thread/', views.CreateThread.as_view(), name='create-thread'),
+    path('inbox/<int:pk>/', views.ThreadView.as_view(), name='thread'),
+    path('inbox/<int:pk>/create-message/', views.CreateMessage.as_view(), name='create-message'),
+
 ]

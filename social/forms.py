@@ -33,3 +33,11 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comments
         fields = ['comment']
+
+
+class ThreadForm(forms.Form):
+    username = forms.CharField(label="", max_length=200)
+
+
+class MessageForm(forms.Form):
+    message = forms.CharField(label="", max_length=2000)
