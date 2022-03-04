@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post, Comments, UserProfile, Notification, ThreadModel, MessageModel
+from .models import Post, Comments, UserProfile, Notification, ThreadModel, MessageModel, Image
 # from .models import *
 from django.views import View
 from .forms import PostForm, CommentForm, ThreadForm, MessageForm
@@ -33,12 +33,20 @@ class PostListView(LoginRequiredMixin, View):
         ).order_by('-created_on')
         # posts = Post.objects.all().order_by('-created_on')
         form = PostForm(request.POST, request.FILES)
+        files = request.FILES.getlist('image')
         if form.is_valid():
             new_post = form.save(commit=False)
             new_post.author = request.user
             new_post.save()
             form = PostForm()
             # return redirect('post_list')
+            for f in files:
+                img = Image(image=f)
+                img.save()
+                new_post.image.add(img)
+
+            new_post.save()
+
         context = {
             'post_list': posts,
             'form': form,
