@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render, redirect
@@ -342,6 +343,15 @@ class FollowNotification(View):
         return redirect('profile', pk=profile_pk)
 
 
+class ThreadNotification(View):
+    def get(self, request, notification_pk, object_pk, *args, **kwargs):
+        notification = Notification.objects.get(pk=notification_pk)
+        thread = ThreadModel.objects.get(pk=object_pk)
+        notification.user_has_seen = True
+        notification.save()
+        return redirect('thread', pk=object_pk)
+
+
 class RemoveNotification(View):
     def delete(self, request, notification_pk, *args, **kwargs):
         notification = Notification.objects.get(pk=notification_pk)
@@ -389,6 +399,8 @@ class CreateThread(View):
                 return redirect('thread', pk=thread.pk)
 
         except:
+            messages.error(request, 'Invalid username')
+
             return redirect('create-thread')
 
 
@@ -420,4 +432,11 @@ class CreateMessage(View):
             body=request.POST.get('message')
         )
         message.save()
+        notification = Notification.objects.create(
+            notification_type=4,
+            from_user=request.user,
+            to_user=receiver,
+            thread=thread,
+
+        )
         return redirect('thread', pk=thread.pk)
