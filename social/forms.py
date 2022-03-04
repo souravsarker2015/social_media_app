@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Comments
+from .models import Post, Comments, MessageModel
 
 
 class PostForm(forms.ModelForm):
@@ -39,5 +39,10 @@ class ThreadForm(forms.Form):
     username = forms.CharField(label="", max_length=200)
 
 
-class MessageForm(forms.Form):
-    message = forms.CharField(label="", max_length=2000)
+class MessageForm(forms.ModelForm):
+    body = forms.CharField(label="", max_length=2000)
+    image = forms.ImageField(required=False)
+
+    class Meta:
+        model = MessageModel
+        fields = ['body', 'image']
