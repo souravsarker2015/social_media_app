@@ -62,3 +62,12 @@ class ShareForm(forms.Form):
             'rows': '3',
             'placeholder': 'Say Something...'
         }))
+
+
+class ExploreForm(forms.Form):
+    query = forms.CharField(
+        label='',
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Explore Tags...'
+        })
+    )
