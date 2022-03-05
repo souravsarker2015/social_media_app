@@ -1,6 +1,8 @@
 from django.contrib import admin
-# from .models import Post, Comments, UserProfile, Notification
-from .models import *
+from .models import Post, Comments, UserProfile, Notification, MessageModel, Tag, Image, ThreadModel
+
+
+# from .models import *
 
 
 @admin.register(Post)
@@ -31,3 +33,13 @@ class ThreadModelAdmin(admin.ModelAdmin):
 @admin.register(MessageModel)
 class MessageModelAdmin(admin.ModelAdmin):
     list_display = ['id', 'thread', 'sender_user', 'receiver_user', 'body', 'image', 'date', 'is_read']
+
+
+@admin.register(Image)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['id', 'image']
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']

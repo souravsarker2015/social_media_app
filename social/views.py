@@ -10,7 +10,7 @@ from django.utils import timezone
 from .models import Post, Comments, UserProfile, Notification, ThreadModel, MessageModel, Image
 # from .models import *
 from django.views import View
-from .forms import PostForm, CommentForm, ThreadForm, MessageForm,ShareForm
+from .forms import PostForm, CommentForm, ThreadForm, MessageForm, ShareForm
 # from .forms import *
 from django.views.generic.edit import UpdateView, DeleteView
 
@@ -44,8 +44,9 @@ class PostListView(LoginRequiredMixin, View):
             new_post = form.save(commit=False)
             new_post.author = request.user
             new_post.save()
+            new_post.create_tags()
             form = PostForm()
-            # return redirect('post_list')
+
             for f in files:
                 img = Image(image=f)
                 img.save()
@@ -81,6 +82,7 @@ class PostDetails(LoginRequiredMixin, View):
             new_comment.author = request.user
             new_comment.post = post
             new_comment.save()
+            new_comment.create_tags()
             form = CommentForm()
         comments = Comments.objects.filter(post=post).order_by('-created_on')
         notification = Notification.objects.create(notification_type=2, from_user=request.user, to_user=post.author, post=post)
