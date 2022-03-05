@@ -15,6 +15,7 @@ urlpatterns = [
 
     path('post/<int:pk>/like/', views.AddLikes.as_view(), name='like'),
     path('post/<int:pk>/dislike/', views.AddDislike.as_view(), name='dislike'),
+    path('post/<int:pk>/share', views.SharedPostView.as_view(), name='share-post'),
 
     path('profile/<int:pk>/', views.ProfileView.as_view(), name='profile'),
     path('profile/edit/<int:pk>/', views.ProfileEditView.as_view(), name='profile_edit'),

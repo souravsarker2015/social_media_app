@@ -7,6 +7,16 @@ function commentReplyToggle(parent_id) {
     }
 }
 
+function shareToggle(parent_id) {
+    const row = document.getElementById(parent_id)
+    if (row.classList.contains('d-none')) {
+        row.classList.remove('d-none')
+    } else {
+        row.classList.add('d-none')
+    }
+}
+
+
 function showNotifications() {
     const container = document.getElementById('notification-container');
     if (container.classList.contains('d-none')) {
@@ -33,20 +43,20 @@ function getCookie(name) {
 }
 
 function removeNotification(removeNotificationURL, redirectURL) {
-	const csrftoken = getCookie('csrftoken');
-	let xmlhttp = new XMLHttpRequest();
+    const csrftoken = getCookie('csrftoken');
+    let xmlhttp = new XMLHttpRequest();
 
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-			if (xmlhttp.status == 200) {
-				window.location.replace(redirectURL);
-			} else {
-				alert('There was an error');
-			}
-		}
-	};
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+            if (xmlhttp.status == 200) {
+                window.location.replace(redirectURL);
+            } else {
+                alert('There was an error');
+            }
+        }
+    };
 
-	xmlhttp.open("DELETE", removeNotificationURL, true);
-	xmlhttp.setRequestHeader("X-CSRFToken", csrftoken);
-	xmlhttp.send();
+    xmlhttp.open("DELETE", removeNotificationURL, true);
+    xmlhttp.setRequestHeader("X-CSRFToken", csrftoken);
+    xmlhttp.send();
 }

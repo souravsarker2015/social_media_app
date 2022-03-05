@@ -5,10 +5,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils import timezone
+
 from .models import Post, Comments, UserProfile, Notification, ThreadModel, MessageModel, Image
 # from .models import *
 from django.views import View
-from .forms import PostForm, CommentForm, ThreadForm, MessageForm
+from .forms import PostForm, CommentForm, ThreadForm, MessageForm,ShareForm
 # from .forms import *
 from django.views.generic.edit import UpdateView, DeleteView
 
@@ -20,9 +22,11 @@ class PostListView(LoginRequiredMixin, View):
             author__profile__followers__in=[logged_in_user.id]
         ).order_by('-created_on')
         form = PostForm()
+        share_form = ShareForm()
         context = {
             'post_list': posts,
             'form': form,
+            'shareform': share_form
         }
         return render(request, 'social/post_list.html', context)
 
@@ -32,6 +36,8 @@ class PostListView(LoginRequiredMixin, View):
             author__profile__followers__in=[logged_in_user.id]
         ).order_by('-created_on')
         # posts = Post.objects.all().order_by('-created_on')
+        share_form = ShareForm()
+
         form = PostForm(request.POST, request.FILES)
         files = request.FILES.getlist('image')
         if form.is_valid():
@@ -50,6 +56,7 @@ class PostListView(LoginRequiredMixin, View):
         context = {
             'post_list': posts,
             'form': form,
+            'shareform': share_form,
         }
         return render(request, 'social/post_list.html', context)
 
@@ -306,6 +313,30 @@ class AddCommentDislike(LoginRequiredMixin, View):
 
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
+
+
+class SharedPostView(View):
+    def post(self, request, pk, *args, **kwargs):
+        original_post = Post.objects.get(pk=pk)
+        form = ShareForm(request.POST)
+
+        if form.is_valid():
+            new_post = Post(
+                shared_body=self.request.POST.get('body'),
+                body=original_post.body,
+                author=original_post.author,
+                created_on=original_post.created_on,
+                shared_user=request.user,
+                shared_on=timezone.now(),
+            )
+            new_post.save()
+
+            for img in original_post.image.all():
+                new_post.image.add(img)
+
+            new_post.save()
+
+        return redirect('post_list')
 
 
 class UserSearch(View):

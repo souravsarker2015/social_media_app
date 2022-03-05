@@ -6,14 +6,18 @@ from django.dispatch import receiver
 
 
 class Post(models.Model):
+    shared_body = models.TextField(blank=True, null=True)
     body = models.TextField()
     image = models.ManyToManyField('Image', blank=True)
     created_on = models.DateTimeField(default=timezone.now)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    shared_on = models.DateTimeField(blank=True, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, default="")
+    shared_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='+', default="")
     likes = models.ManyToManyField(User, blank=True, related_name='likes')
     dislikes = models.ManyToManyField(User, blank=True, related_name='dislikes')
-    # def __str__(self):
-    #     return self.author
+
+    class Meta:
+        ordering = ['-created_on', '-shared_on']
 
 
 class Comments(models.Model):
@@ -24,6 +28,7 @@ class Comments(models.Model):
     likes = models.ManyToManyField(User, blank=True, related_name='comment_likes')
     dislikes = models.ManyToManyField(User, blank=True, related_name='comment_dislikes')
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='+')
+
 
     @property
     def children(self):
@@ -89,3 +94,5 @@ class MessageModel(models.Model):
 
 class Image(models.Model):
     image = models.ImageField(upload_to='uploads/post_photos', blank=True, null=True)
+
+
